@@ -1,0 +1,386 @@
+{
+  "name": "E-Commerce Order Automation-Phase 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        -304
+      ],
+      "id": "84fb4224-22f7-4e33-96c1-fdfd737d9d00",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"customerId\": \"C005\",\n  \"items\": [\n    {\n      \"productId\": \"P001\",\n      \"quantity\": 2\n    },\n    {\n      \"productId\": \"P008\",\n      \"quantity\": 1\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -480,
+        -304
+      ],
+      "id": "25a7d14e-e6fe-4905-8508-f66449da13d1",
+      "name": "Create Order"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 53171719,
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=53171719"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -256,
+        -304
+      ],
+      "id": "522a8bef-34e2-472b-9df2-0e36b875d4e9",
+      "name": "Get Products",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const order = $('Create Order').first().json;\nconst products = $input.all().map(i => i.json);\n\nconst orderId = 'O' + Date.now();\n\nconst items = order.items.map(it => {\n  const p = products.find(x => x['Product ID'] === it.productId);\n\n  if (!p) {\n    throw new Error(`Product ${it.productId} not found`);\n  }\n\n  const price = Number(String(p['Price']).replace(/[^0-9.]/g, ''));\n\n  return {\n    'Order ID': orderId,\n    'Product ID': it.productId,\n    'Quantity': it.quantity,\n    'Price': price,\n    lineTotal: price * it.quantity\n  };\n});\n\nconst total = items.reduce((sum, item) => sum + item.lineTotal, 0);\n\nreturn [{\n  json: {\n    'Order ID': orderId,\n    'Customer ID': order.customerId,\n    'Order Date': new Date().toISOString().slice(0, 10),\n    'Total Amount': Number(total.toFixed(2)),\n    'Payment Status': 'Pending',\n    'Order Status': 'New',\n    'Fulfillment Status': 'Unfulfilled',\n    items\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -304
+      ],
+      "id": "e806c306-2633-44ad-b968-33b8ca9130e1",
+      "name": "Calculate"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -304
+      ],
+      "id": "098be1a8-71d7-4234-837a-6ac6040caf54",
+      "name": "Split Out (split order items)"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 243160582,
+          "mode": "list",
+          "cachedResultName": "Order Items",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=243160582"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product ID",
+              "displayName": "Product ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "lineTotal",
+              "displayName": "lineTotal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        -304
+      ],
+      "id": "abe5f97a-3c62-40d4-8e81-b4e4e552f674",
+      "name": "Append row in sheet (Save order item)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 750805375,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=750805375"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order ID": "={{ $json[\"Order ID\"] }}",
+            "Customer ID": "={{ $json[\"Customer ID\"] }}",
+            "Order Date": "={{ $json[\"Order Date\"] }}",
+            "Total Amount": "= {{ $json[\"Total Amount\"] }}",
+            "Payment Status": "= {{ $json[\"Payment Status\"] }}",
+            "Order Status": "= {{ $json[\"Order Status\"] }}",
+            "Fulfillment Status": "={{ $json[\"Fulfillment Status\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order Status",
+              "displayName": "Order Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fulfillment Status",
+              "displayName": "Fulfillment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        192,
+        -512
+      ],
+      "id": "11771f60-77aa-4d47-91cf-7576ac200c90",
+      "name": "Append row in sheet (Save orders)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Order": {
+      "main": [
+        [
+          {
+            "node": "Get Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Products": {
+      "main": [
+        [
+          {
+            "node": "Calculate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate": {
+      "main": [
+        [
+          {
+            "node": "Split Out (split order items)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet (Save orders)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out (split order items)": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet (Save order item)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet (Save order item)": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "397e2a06-fa6b-42a5-99f0-cf20a6d1ad54",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b62201bd4f35cad71e7fa950617ef44177a60c8d5725ae4128e80d2420fb447a"
+  },
+  "nodeGroups": [],
+  "id": "au3gMJRW61kkhHXD",
+  "tags": []
+}

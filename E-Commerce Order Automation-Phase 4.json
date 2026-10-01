@@ -1,0 +1,744 @@
+{
+  "name": "Phase 4",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -304
+      ],
+      "id": "9ddddcd8-9fe9-473d-8227-1bdce999556f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 243160582,
+          "mode": "list",
+          "cachedResultName": "Order Items",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=243160582"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Order ID",
+              "lookupValue": "O1790021668631"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        -304
+      ],
+      "id": "2e4d2962-834f-43f8-aba7-cedd3f923e9e",
+      "name": "Filter Order Items",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1296860285,
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1296860285"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Product ID",
+              "lookupValue": "={{ $json['Product ID'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        32,
+        -304
+      ],
+      "id": "71497564-2308-4002-b292-4a9102e62502",
+      "name": "Find Inventory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9353ff7f-6744-4577-b83f-1d7c0f311f00",
+              "leftValue": "={{ $json['Available Stock'] }}",
+              "rightValue": "={{ $('Filter Order Items').item.json.Quantity }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        256,
+        -304
+      ],
+      "id": "592d46ce-92be-48dc-82ae-9228b149d3e0",
+      "name": "If(Check Stock)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "12c85994-5d8f-43b3-a2fc-2193782a7883",
+              "name": "New stock",
+              "value": "={{ $json[\"Available Stock\"] - $('Filter Order Items').item.json[\"Quantity\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "1b2045eb-4a84-46ad-a978-80d430870e67",
+              "name": "Product ID",
+              "value": "={{ $('Find Inventory').item.json['Product ID'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        480,
+        -208
+      ],
+      "id": "35cee778-97e3-4024-ab26-425eab4122a6",
+      "name": "Edit Fields(Calculate new stock)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d4c9ebad-087d-443f-9c48-70b554a6f4a5",
+              "leftValue": "={{ Number($json[\"Available Stock\"]) }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        928,
+        -208
+      ],
+      "id": "fc520264-7dd5-434b-a8fb-1ac7ffa7cd61",
+      "name": "If(Check Low Stock)"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1296860285,
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1296860285"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product ID": "={{ $('Edit Fields(Calculate new stock)').item.json['Product ID'] }}",
+            "Stock Status": "In Stock",
+            "Inventory Update Time": "={{ $now }}",
+            "Available Stock": "={{ $('Edit Fields(Calculate new stock)').item.json['New stock'] }}"
+          },
+          "matchingColumns": [
+            "Product ID"
+          ],
+          "schema": [
+            {
+              "id": "Product ID",
+              "displayName": "Product ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Available Stock",
+              "displayName": "Available Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Stock Status",
+              "displayName": "Stock Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inventory Update Time",
+              "displayName": "Inventory Update Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        -112
+      ],
+      "id": "8b046130-ca48-4320-8a9c-303443855ef2",
+      "name": "Update row in sheet1(Update in stock status)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1296860285,
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1296860285"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product ID": "={{ $('Edit Fields(Calculate new stock)').item.json['Product ID'] }}",
+            "Inventory Update Time": "={{ $now  }}",
+            "Stock Status": "Low Stock"
+          },
+          "matchingColumns": [
+            "Product ID"
+          ],
+          "schema": [
+            {
+              "id": "Product ID",
+              "displayName": "Product ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Available Stock",
+              "displayName": "Available Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Stock Status",
+              "displayName": "Stock Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inventory Update Time",
+              "displayName": "Inventory Update Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1152,
+        -304
+      ],
+      "id": "33302df4-758f-4678-8567-8565283e01fc",
+      "name": "Update row in sheet(Update low stock status)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1296860285,
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1296860285"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product ID": "={{ $json[\"Product ID\"] }}",
+            "Available Stock": "={{ $json['New stock'] }}",
+            "Inventory Update Time": "={{ $now  }}"
+          },
+          "matchingColumns": [
+            "Product ID"
+          ],
+          "schema": [
+            {
+              "id": "Product ID",
+              "displayName": "Product ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Available Stock",
+              "displayName": "Available Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Stock Status",
+              "displayName": "Stock Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inventory Update Time",
+              "displayName": "Inventory Update Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        -400
+      ],
+      "id": "3b4468b4-283d-4a39-9224-2150bff54e12",
+      "name": "Update row in sheet(Update Inventory review)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1296860285,
+          "mode": "list",
+          "cachedResultName": "Inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1296860285"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product ID": "={{ $json['Product ID'] }}",
+            "Stock Status": "=",
+            "Available Stock": "={{ $json['New stock'] }}",
+            "Inventory Update Time": "={{ $now}} "
+          },
+          "matchingColumns": [
+            "Product ID"
+          ],
+          "schema": [
+            {
+              "id": "Product ID",
+              "displayName": "Product ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Available Stock",
+              "displayName": "Available Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stock Status",
+              "displayName": "Stock Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inventory Update Time",
+              "displayName": "Inventory Update Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        -208
+      ],
+      "id": "1140fca9-dd55-4110-85a2-fe4066041e57",
+      "name": "Update row in sheet(update inventory )",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Filter Order Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Order Items": {
+      "main": [
+        [
+          {
+            "node": "Find Inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Inventory": {
+      "main": [
+        [
+          {
+            "node": "If(Check Stock)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If(Check Stock)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields(Calculate new stock)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet(Update Inventory review)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields(Calculate new stock)": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet(update inventory )",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If(Check Low Stock)": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet(Update low stock status)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet1(Update in stock status)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet(Update Inventory review)": {
+      "main": [
+        []
+      ]
+    },
+    "Update row in sheet(update inventory )": {
+      "main": [
+        [
+          {
+            "node": "If(Check Low Stock)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "19e9c744-71f1-4421-9984-ee8141ff0bb3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b62201bd4f35cad71e7fa950617ef44177a60c8d5725ae4128e80d2420fb447a"
+  },
+  "nodeGroups": [],
+  "id": "kPwNSGprB9lAmp2E",
+  "tags": []
+}

@@ -1,0 +1,1293 @@
+{
+  "name": "Phase 7",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -624,
+        -368
+      ],
+      "id": "442b42d4-58dd-4cbe-9f4d-026a2d05a78b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "19b79075-4bb6-40c2-9f46-d5b920ee3d1c",
+              "leftValue": "={{ $json['Order Status'] }}",
+              "rightValue": "Confirmed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -176,
+        -368
+      ],
+      "id": "8b742c92-5e76-4b80-8141-e42101619d31",
+      "name": "Check order status"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "12753a5c-5194-4f73-a3b8-17c903cc843c",
+              "leftValue": "={{ $json['Payment Status'] }}",
+              "rightValue": "Paid",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        48,
+        -368
+      ],
+      "id": "ee6fdbcf-b833-4cb5-95eb-6bda40e8ccc8",
+      "name": "Check Payment"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "68351fe1-ce14-4131-965b-2a1fda7720df",
+              "leftValue": "={{ $json[\"Inventory Status\"] }}",
+              "rightValue": "=Available",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        -368
+      ],
+      "id": "24158013-d93d-494e-b9dd-1b9492062567",
+      "name": "Check Inventory"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 750805375,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=750805375"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order ID": "={{ $json['Order ID'] }}",
+            "Order Status": "Processing"
+          },
+          "matchingColumns": [
+            "Order ID"
+          ],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order Status",
+              "displayName": "Order Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fulfillment Status",
+              "displayName": "Fulfillment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inventory Status",
+              "displayName": "Inventory Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        -368
+      ],
+      "id": "50373275-5ce3-4880-a1ab-e09c0eb04939",
+      "name": "Update to processing",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1974394840,
+          "mode": "list",
+          "cachedResultName": "Shipments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1974394840"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Shipment ID": "SHIP001",
+            "Order ID": "={{ $json[\"Order ID\"] }}",
+            "Courier Name": "TCS",
+            "Tracking Number": "TRK001",
+            "Shipment Status": "Created"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Shipment ID",
+              "displayName": "Shipment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Courier Name",
+              "displayName": "Courier Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tracking Number",
+              "displayName": "Tracking Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Shipment Status",
+              "displayName": "Shipment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        -368
+      ],
+      "id": "fb65680d-87c6-493d-af72-25dd9769d574",
+      "name": "Create Shipment",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 750805375,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=750805375"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order ID": "={{$json[\"Order ID\"] }}",
+            "Order Status": "Shipped"
+          },
+          "matchingColumns": [
+            "Order ID"
+          ],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order Status",
+              "displayName": "Order Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fulfillment Status",
+              "displayName": "Fulfillment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inventory Status",
+              "displayName": "Inventory Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1168,
+        -368
+      ],
+      "id": "8bca64fc-7de0-4006-aefa-085c8636e712",
+      "name": "Update to shipped",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 750805375,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=750805375"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -400,
+        -368
+      ],
+      "id": "63e59e7e-dc31-4d9a-a907-9e083fc07875",
+      "name": "Get Orders",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1974394840,
+          "mode": "list",
+          "cachedResultName": "Shipments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1974394840"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Shipment ID": "={{ $('Create Shipment').item.json['Shipment ID'] }}",
+            "Shipment Status": "Delivered"
+          },
+          "matchingColumns": [
+            "Shipment ID"
+          ],
+          "schema": [
+            {
+              "id": "Shipment ID",
+              "displayName": "Shipment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Courier Name",
+              "displayName": "Courier Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tracking Number",
+              "displayName": "Tracking Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Shipment Status",
+              "displayName": "Shipment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1840,
+        -368
+      ],
+      "id": "51a89b3e-73e6-4fb9-ad62-39040bb19590",
+      "name": "Update shipped to delivered",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 750805375,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=750805375"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order ID": "=ORD007",
+            "Order Status": "Delivered"
+          },
+          "matchingColumns": [
+            "Order ID"
+          ],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer ID",
+              "displayName": "Customer ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order Status",
+              "displayName": "Order Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fulfillment Status",
+              "displayName": "Fulfillment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inventory Status",
+              "displayName": "Inventory Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2064,
+        -368
+      ],
+      "id": "66765879-f2ad-4dfd-98c7-bd94c9e45b13",
+      "name": "update order to delivered",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1013665613,
+          "mode": "list",
+          "cachedResultName": "Order History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1013665613"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "History ID": "H001",
+            "Order ID": "ORD007",
+            "Old Status": "Shipped",
+            "New Status": "Delivered",
+            "Timestamp": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "History ID",
+              "displayName": "History ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2288,
+        -368
+      ],
+      "id": "2fc71c56-c255-460b-bf71-0d0409e5a093",
+      "name": "Record Order History",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1013665613,
+          "mode": "list",
+          "cachedResultName": "Order History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1013665613"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "History ID": "H002",
+            "Order ID": "ORD007",
+            "Old Status": "Processing",
+            "New Status": "Shipped",
+            "Timestamp": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "History ID",
+              "displayName": "History ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1616,
+        -368
+      ],
+      "id": "f43aff3d-2649-4687-8e47-fadc02a121e6",
+      "name": "History-shipped",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1013665613,
+          "mode": "list",
+          "cachedResultName": "Order History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1013665613"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "History ID": "H002",
+            "Order ID": "0rd007",
+            "Old Status": "Processing",
+            "New Status": "Shipped",
+            "Timestamp": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "History ID",
+              "displayName": "History ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1392,
+        -368
+      ],
+      "id": "5b8b7355-31e6-4976-b636-378447fee513",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8",
+          "mode": "list",
+          "cachedResultName": "E-commerce Automation Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1013665613,
+          "mode": "list",
+          "cachedResultName": "Order History",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-n6BHNuwysHh8CTP-OX3qRGpyWQfA2rxB4lwQCbawH8/edit#gid=1013665613"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "History ID": "H003",
+            "Order ID": "ORD007",
+            "Old Status": "Confirmed",
+            "New Status": "Proccessing",
+            "Timestamp": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "History ID",
+              "displayName": "History ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Old Status",
+              "displayName": "Old Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "New Status",
+              "displayName": "New Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        -368
+      ],
+      "id": "04a9ca5d-ca9e-435d-be5f-45a9f4a73f71",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "GOXFHzK2ZkHS0tlZ",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check order status": {
+      "main": [
+        [
+          {
+            "node": "Check Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Payment": {
+      "main": [
+        [
+          {
+            "node": "Check Inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Inventory": {
+      "main": [
+        [
+          {
+            "node": "Update to processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update to processing": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Shipment": {
+      "main": [
+        [
+          {
+            "node": "Update to shipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update to shipped": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Orders": {
+      "main": [
+        [
+          {
+            "node": "Check order status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update shipped to delivered": {
+      "main": [
+        [
+          {
+            "node": "update order to delivered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update order to delivered": {
+      "main": [
+        [
+          {
+            "node": "Record Order History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "History-shipped": {
+      "main": [
+        [
+          {
+            "node": "Update shipped to delivered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "History-shipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Create Shipment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1b6a0082-12a9-40fe-994c-d70885e6e769",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b62201bd4f35cad71e7fa950617ef44177a60c8d5725ae4128e80d2420fb447a"
+  },
+  "nodeGroups": [],
+  "id": "fcRrQ5c7NYuwcrMq",
+  "tags": []
+}
